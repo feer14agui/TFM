@@ -16,7 +16,8 @@ import streamlit as st
 from streamlit import cli as stcli
 import spacy
 import time
-
+from matplotlib.backends.backend_agg import RendererAgg
+_lock = RendererAgg.lock
 ##Elegimos el jugador que queremos comparar
 
 def main():
@@ -60,7 +61,7 @@ def main():
                '% de efectividad de los centros90min','Balones perdidos90min','Pérdidas en campo propio90min',
                'Balones recuperados90min','Recuperaciones en campo rival90min','Goles esperados90min','Disputas90min',
                'Disputas en ataque90min','Regates90min','pos_num']
-               
+
     viewcolsDef = ['Balones recuperados90min','Recuperaciones en campo rival90min','Disputas90min',
                    'Disputas aéreas90min','Entradas90min','Interceptaciones90min','Rechaces90min']
 
@@ -314,35 +315,36 @@ def main():
     check_jugador = st.sidebar.checkbox(jugador, value = True)
     check_jugador_sim = st.sidebar.checkbox(jugador_similar, value = True)
 
-    if check_jugador and not check_jugador_sim:
-        list_jug = [jugador]
-        data_show = data
-        fig1 = plt.figure(figsize=(8, 8))
+    with _lock:
+        if check_jugador and not check_jugador_sim:
+            list_jug = [jugador]
+            data_show = data
+            fig1 = plt.figure(figsize=(8, 8))
 
-    elif check_jugador_sim and not check_jugador:
-        list_jug = [jugador_similar]
-        data_show = data2
-        fig1 = plt.figure(figsize=(8, 8))
+        elif check_jugador_sim and not check_jugador:
+            list_jug = [jugador_similar]
+            data_show = data2
+            fig1 = plt.figure(figsize=(8, 8))
 
-    elif check_jugador_sim and check_jugador:
-        list_jug = [jugador,jugador_similar]
-        data_show = data2
-        fig1 = plt.figure(figsize=(8, 8))
+        elif check_jugador_sim and check_jugador:
+            list_jug = [jugador,jugador_similar]
+            data_show = data2
+            fig1 = plt.figure(figsize=(8, 8))
+            radar = ComplexRadar(fig1, variables, ranges)
+            radar.plot(data)
+            radar.fill(data, alpha=0.2)
+        else:
+            list_jug = []
+            data_show = []
+            fig1 = plt.figure(figsize=(8, 8))
+            #radar.legend(data)
+
+        #fig1 = plt.figure(figsize=(8, 8))
         radar = ComplexRadar(fig1, variables, ranges)
-        radar.plot(data)
-        radar.fill(data, alpha=0.2)
-    else:
-        list_jug = []
-        data_show = []
-        fig1 = plt.figure(figsize=(8, 8))
-        #radar.legend(data)
-
-    #fig1 = plt.figure(figsize=(8, 8))
-    radar = ComplexRadar(fig1, variables, ranges)
-    radar.plot(data_show)
-    radar.fill(data_show, alpha=0.2)
-    radar.legend(data_show)
-    st.pyplot(fig1)
+        radar.plot(data_show)
+        radar.fill(data_show, alpha=0.2)
+        radar.legend(data_show)
+        st.pyplot(fig1)
 
 
 if __name__ == "__main__":
