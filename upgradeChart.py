@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 import sys
 import streamlit as st
 from streamlit import cli as stcli
-import spacy
 import time
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
