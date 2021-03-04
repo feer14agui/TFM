@@ -124,7 +124,7 @@ def main():
 
         #Encontramos la distancia de cada jugador con el seleccionado
 
-        distance = df.apply(euclidean_distance, axis=1)
+        #distances = df.apply(euclidean_distance, axis=1)
 
 
         #obtenemos un dataframe solo con las columnas seleccionadas
@@ -302,7 +302,7 @@ def main():
     #df_jugador = df_jugador.set_index('Jugador', inplace=True)
     df_comun = pd.concat([df_jugador, datos_jsimilar])
     df_comun = df_comun.set_index('Jugador')
-    st.table(df_comun[["Nacionalidad", "Edad", "Equipo","Liga"]])
+    st.table(df_comun[["Nacionalidad", "Edad","Posicion", "Equipo","Liga"]])
     # Data
     variables = atributos
     data = values_jugador
