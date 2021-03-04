@@ -15,6 +15,8 @@ import sys
 import streamlit as st
 from streamlit import cli as stcli
 import time
+from scipy.spatial import distance
+from streamlit.report_thread import add_report_ctx
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
 ##Elegimos el jugador que queremos comparar
@@ -26,8 +28,7 @@ def main():
     df = pd.read_csv(raw_data, sep=";")
 
 # Your streamlit code
-    st.title('Búsqueda de jugadores')
-    st.write("Vamos a buscar el jugador similar.")
+    st.title('Análisis y Comparativa de jugadores')
     jugador = st.multiselect('Introduzca el jugador que desea comparar:', [c for c in df["Jugador"]])
     jugador = (jugador[0])
 
@@ -143,7 +144,7 @@ def main():
         df_normalized = (df_compare - df_compare.mean()) / df_compare.std()
 
         #KNN
-        from scipy.spatial import distance
+
 
         jugador_normalizado = df_normalized[df["Jugador"] == jugador]
 
@@ -303,6 +304,7 @@ def main():
     df_comun = pd.concat([df_jugador, datos_jsimilar])
     df_comun = df_comun.set_index('Jugador')
     st.table(df_comun[["Nacionalidad", "Edad","Posicion", "Equipo","Liga"]])
+    st.write(jugadores_similares)
     # Data
     variables = atributos
     data = values_jugador
